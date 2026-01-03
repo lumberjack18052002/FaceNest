@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("/profiles")
 public class ProfileController {
 
     @Autowired
@@ -25,13 +27,13 @@ public class ProfileController {
         return profileService.saveProfile(profile);
     }
 
-    @GetMapping("/Profiles/{id}")
+    @GetMapping("/findprofile/{id}")
     public ResponseEntity<ProfileResponseDTO> findProfile(@PathVariable Long id)
     {
         return profileService.getProfileById(id);
     }
 
-    @PutMapping("/Profiles/{id}")
+    @PutMapping("/updateprofile/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ProfileResponseDTO> UpdateProfile(@PathVariable Long id, @RequestBody ProfileRequestDTO profilerequestDTO)
     {
