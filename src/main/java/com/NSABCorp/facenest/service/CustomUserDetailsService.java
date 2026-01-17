@@ -23,6 +23,9 @@ public class CustomUserDetailsService
 
     // USER REGISTRATION
     public User createUser(String email, String plainPassword) {
+        if (profileRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email already registered");
+        }
         String encodedPassword = passwordEncoder.encode(plainPassword);
         User user = new User(email, encodedPassword);
         return profileRepository.save(user);
@@ -33,16 +36,8 @@ public class CustomUserDetailsService
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
 
-        User user = profileRepository.findByEmail(email);
+        User user = profileRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (user == null) {
-            throw new UsernameNotFoundException("Email not registered " + email);
-        }
-
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .roles("USER")
-                .build();
+        return new com.NSABCorp.facenest.security.UserPrincipal(user);
     }
 }

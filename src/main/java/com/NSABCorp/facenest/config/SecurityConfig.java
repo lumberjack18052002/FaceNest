@@ -1,5 +1,6 @@
 package com.NSABCorp.facenest.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,14 +25,25 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/auth/**").permitAll()
+                        .requestMatchers("/login", "/auth/**","/data/register").permitAll()
                         .anyRequest().authenticated()
                 )
 
                 .formLogin(form -> form
                         .successHandler((req, res, auth) -> res.setStatus(200))
-                        .failureHandler((req, res, ex) -> res.setStatus(401))
+                        .failureHandler((req, res, ex) -> {
+                            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            res.setContentType("application/json");
+
+                                res.getWriter().write("""
+        {
+          "error": "Invalid Credentials"
+        }
+        """);
+                        })
+
                 )
+
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
