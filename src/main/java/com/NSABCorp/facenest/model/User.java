@@ -26,4 +26,14 @@ public class User {
     }
 
     // getters & setters
+    @OneToOne(mappedBy = "authUser", optional = false)
+    private MasterData masterData;
+
+    public MasterData getMasterData() {
+        return masterData;
+    }
+
+    public void setMasterData(MasterData masterData) {
+        this.masterData = masterData;
+    }
 }
